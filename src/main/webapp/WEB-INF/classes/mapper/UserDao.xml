@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soecode.lyf.dao.UserDao">
+	<!-- 目的：为dao接口方法提供sql语句配置 -->
+	<resultMap id="user1" type="com.soecode.lyf.entity.User">
+		<id property="id" column="user_id"></id>
+		<result property="userName" column="user_name"></result>
+		<result property="address" column="address"/>
+		
+		<collection property="cards" column="user_id" ofType="com.soecode.lyf.entity.Card">
+			<id property="id" column="id"/>
+			<result property="cardNo" column="card_no"/>
+			<result property="remark" column="remark"/>
+		</collection>
+	</resultMap>
+
+	<select id="queryById" resultMap="user1" parameterType="int">
+		<!-- 具体的sql -->
+		SELECT
+				t1.id user_id, t1.user_name,t1.address,t2.id,t2.card_no,t2.remark
+		FROM
+				user1 t1, card1 t2
+		WHERE
+				t1.id=t2.user_id and t1.id=#{id}
+	</select>
+
+	
+	<select id="queryAll" resultMap="user1">
+		SELECT
+			t1.id user_id, t1.user_name,t1.address,t2.id,t2.card_no,t2.remark
+		FROM
+			user1 t1, card1 t2
+		WHERE
+			t1.id=t2.user_id
+		ORDER BY
+			t1.id
+		LIMIT #{offset}, #{limit}
+	</select>
+	
+	<update id="reduceNumber">
+		UPDATE user1
+		SET user_name = number - 1
+		WHERE
+			book_id = #{bookId}
+		AND number > 0
+	</update>
+
+</mapper>
